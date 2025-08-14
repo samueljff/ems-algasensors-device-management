@@ -1,7 +1,6 @@
 package com.fonseca.algasensors.device.management.api.controller.handlerExceptions;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -45,11 +44,13 @@ public class SensorValidationExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ValidationErrorResponse> handleConstraintViolation(
             ConstraintViolationException ex, HttpServletRequest request) {
-
+        // Usando merge para evitar erro de chave duplicada quando há múltiplas validações no mesmo campo
         Map<String, String> fieldErrors = ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         violation -> violation.getPropertyPath().toString(),
-                        ConstraintViolation::getMessage
+                        ConstraintViolation::getMessage,
+                        (existing, replacement) -> existing + "; " + replacement // Combina mensagens separadas por ";"
+
                 ));
 
         ValidationErrorResponse errorResponse = new ValidationErrorResponse(

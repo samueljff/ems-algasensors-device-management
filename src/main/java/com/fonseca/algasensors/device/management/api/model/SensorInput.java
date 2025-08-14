@@ -1,25 +1,23 @@
 package com.fonseca.algasensors.device.management.api.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
 public class SensorInput {
-    @NotNull(message = "Nome é obrigatório")
-    @NotEmpty @NotBlank(message = "Nome não pode estar em branco")
+    @NotBlank
+    @Size(min = 2, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
     private  String name;
-    @NotNull(message = "IP é obrigatório")
-    @NotBlank(message = "IP não pode estar em branco")
+    @NotBlank
+    @Pattern(regexp = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+            message = "IP deve estar em formato válido (ex: 192.168.1.1)")
     private String ip;
-    @NotNull(message = "Localização é obrigatória")
-    @NotBlank(message = "Localização não pode estar em branco")
+    @NotBlank
+    @Size(min = 2, max = 200, message = "Localização deve ter entre 2 e 200 caracteres")
     private String location;
-    @NotNull(message = "Protocolo é obrigatório")
-    @NotBlank(message = "Protocolo não pode estar em branco")
+    @NotBlank
     private String protocol;
-    @NotNull(message = "Modelo é obrigatório")
-    @NotBlank(message = "Modelo não pode estar em branco")
+    @NotBlank
+    @Size(min = 2, max = 100, message = "Modelo deve ter entre 2 e 50 caracteres")
     private  String model;
 }
