@@ -1,5 +1,6 @@
 package com.fonseca.algasensors.device.management.api.controller;
 
+import com.fonseca.algasensors.device.management.api.client.SensorMonitoringClient;
 import com.fonseca.algasensors.device.management.api.model.SensorInput;
 import com.fonseca.algasensors.device.management.api.model.SensorOutput;
 import com.fonseca.algasensors.device.management.api.service.SensorService;
@@ -26,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class SensorController {
     private final SensorRepository sensorRepository;
     private final SensorService sensorService;
+    private final SensorMonitoringClient sensorMonitoringClient;
 
     @GetMapping
     public Page<SensorOutput> search(@PageableDefault Pageable pageable) {
@@ -65,7 +67,10 @@ public class SensorController {
     @DeleteMapping("/{sensorId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable TSID sensorId) {
+
         sensorService.delete(sensorId);
+
+        sensorMonitoringClient.disableMonitoring(sensorId);
     }
 
     @PutMapping("/{sensorId}/enable")
@@ -75,6 +80,7 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(true);
         sensorRepository.save(sensor);
+        sensorMonitoringClient.enableMonitoring(sensorId);
     }
 
     @DeleteMapping("/{sensorId}/enable")
@@ -84,5 +90,6 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(false);
         sensorRepository.save(sensor);
+        sensorMonitoringClient.disableMonitoring(sensorId);
     }
 }
