@@ -1,36 +1,18 @@
 package com.fonseca.algasensors.device.management.api.client.impl;
 
+import com.fonseca.algasensors.device.management.api.client.RestClienteFactory;
 import com.fonseca.algasensors.device.management.api.client.SensorMonitoringClient;
-import com.fonseca.algasensors.device.management.api.client.impl.clientExceptions.SensorMonitoringClientBadGatewayException;
 import io.hypersistence.tsid.TSID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
-import java.time.Duration;
 
 @Component
 public class SensorMonitoringClientImpl implements SensorMonitoringClient {
 
     private final RestClient restClient;
 
-    public SensorMonitoringClientImpl(RestClient.Builder builder) {
-        this.restClient = builder.baseUrl("http://localhost:8082")
-                .requestFactory(generateClientHttpRequestFactory())
-                .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
-                    throw new SensorMonitoringClientBadGatewayException();
-                })
-                .build();
-    }
-
-    private ClientHttpRequestFactory generateClientHttpRequestFactory() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setReadTimeout(Duration.ofSeconds(5));
-        factory.setConnectTimeout(Duration.ofSeconds(3));
-        return factory;
+    public SensorMonitoringClientImpl(RestClienteFactory factory) {
+        this.restClient = factory.temperatureMonitoringRestClient();
     }
 
     @Override
