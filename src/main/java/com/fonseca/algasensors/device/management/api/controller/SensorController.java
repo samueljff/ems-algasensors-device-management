@@ -1,7 +1,9 @@
 package com.fonseca.algasensors.device.management.api.controller;
 
 import com.fonseca.algasensors.device.management.api.client.SensorMonitoringClient;
+import com.fonseca.algasensors.device.management.api.model.SensorDetailOutput;
 import com.fonseca.algasensors.device.management.api.model.SensorInput;
+import com.fonseca.algasensors.device.management.api.model.SensorMonitoringOutput;
 import com.fonseca.algasensors.device.management.api.model.SensorOutput;
 import com.fonseca.algasensors.device.management.api.service.SensorService;
 import com.fonseca.algasensors.device.management.common.IdGenerator;
@@ -41,6 +43,19 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return sensorService.convertToModel(sensor);
+    }
+
+    @GetMapping("{sensorId}/detail")
+    public SensorDetailOutput getOneWithDetail(@PathVariable TSID sensorId) {
+        Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        SensorMonitoringOutput monitoringOutput = sensorMonitoringClient.getDetail(sensorId);
+        SensorOutput sensorOutput = sensorService.convertToModel(sensor);
+        return SensorDetailOutput.builder()
+                .monitoring(monitoringOutput)
+                .sensor(sensorOutput)
+                .build();
     }
 
     @PostMapping
