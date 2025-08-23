@@ -16,7 +16,7 @@ public class SensorMonitoringClientImpl implements SensorMonitoringClient {
         this.restClient = factory.temperatureMonitoringRestClient();
     }
 
-    @Override
+    //@Override
     public void enableMonitoring(TSID sensorId) {
         restClient.put()
                 .uri("/api/sensors/{sensorId}/monitoring/enable", sensorId)
